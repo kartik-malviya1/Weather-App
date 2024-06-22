@@ -8,6 +8,7 @@ import cloudIcon from "../Assets/cloud.png";
 import drizzleIcon from "../Assets/drizzle.png";
 import rainIcon from "../Assets/rain.png";
 import snowIcon from "../Assets/snow.png";
+import axios from 'axios'
 
 
 function SunA() {
@@ -58,21 +59,21 @@ const Weather = () => {
     }
     try {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${import.meta.env.VITE_API_KEY}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      if(!response.ok){
-        alert(data.message)
-      }
-      console.log(data);
+      const response = await axios.get(url)
 
-      const iconCode = data.weather && data.weather[0] && data.weather[0].icon;
+      // if(!response.ok){
+      //   alert(response.message)
+      // }
+      // console.log(response);
+
+      const iconCode = response.data.weather && response.data.weather[0] && response.data.weather[0].icon;
       const icon = allIcons[iconCode] || clearIcon;
 
       setWeatherData({
-        humidity: data.main.humidity,
-        wind: data.wind.speed,
-        temperature: Math.floor(data.main.temp),
-        location: data.name,
+        humidity: response.data.main.humidity,
+        wind: response.data.wind.speed,
+        temperature: Math.floor(response.data.main.temp),
+        location: response.data.name,
         icon: icon
       });
     } catch (error) {
@@ -95,7 +96,7 @@ const Weather = () => {
             placeholder="Search"
           />
           <svg
-          onClick={()=>search(inputRef.current.value)} className="cursor-pointer bg-transparent border  items-center shadow-lg rounded-full fill-white p-2 px-0"
+          onClick={()=>search(inputRef.current.value)} className="cursor-pointer bg-transparent border items-center shadow-lg rounded-full fill-white p-2 px-0"
           xmlns="http://www.w3.org/2000/svg"
           width="40"
           height="40"
